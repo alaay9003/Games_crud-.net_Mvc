@@ -1,5 +1,6 @@
 ﻿
 using Games_Mvc.Models;
+using Games_Mvc.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Games_Mvc.Controllers
@@ -7,9 +8,17 @@ namespace Games_Mvc.Controllers
     public class GameController : Controller
     {
         private readonly ApplicationDbContext _context;
-        public GameController(ApplicationDbContext context)
+        private readonly ICategortServies _categoryService;
+        private readonly IDevicesServies _deviceService;
+        private readonly IGameServies _GameServies;
+
+        public GameController(ApplicationDbContext context, ICategortServies categoryService,
+            IDevicesServies deviceService, IGameServies gameServies)
         {
-            _context = context;   
+            _context = context;
+            _categoryService = categoryService;
+            _deviceService = deviceService;
+            _GameServies = gameServies;
         }
         public IActionResult Index()
         {
@@ -22,19 +31,22 @@ namespace Games_Mvc.Controllers
 
             CreateGameViewModel viewModel = new CreateGameViewModel()
             {
-                Categories = _context.Categories.Select(c => new SelectListItem {Value = c.Id.ToString() ,Text = c.Name }).ToList(),
-                Devieces = _context.Devices.Select(d => new SelectListItem {  Value = d.Id.ToString() , Text = d.Name }).ToList(),
+                Categories = _categoryService.GetSelectList(),
+                Devieces = _deviceService.GetSelectList(),
             };
             return View(viewModel);
         }
         [HttpPost]
-        public IActionResult Create(CreateGameViewModel model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CreateGameViewModel model)
         {
             if(!ModelState.IsValid)
             {
+                model.Categories = _categoryService.GetSelectList();
+                model.Devieces = _deviceService.GetSelectList();
                 return View(model);
             }
-
+            await _GameServies.Create(model);
             return RedirectToAction(nameof(Index)); 
             
         }

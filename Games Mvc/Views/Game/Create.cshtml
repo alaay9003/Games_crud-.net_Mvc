@@ -1,11 +1,12 @@
-﻿@model CreateGameViewModel;
+﻿@using Games_Mvc.Setting;
+@model CreateGameViewModel;
 @{
     ViewData["Title"] = "Create Game";
 }
 
 
 <h4 class="text-secondary"><i class="bi bi-plus-circle"></i> Add a New Game</h4>
-<form asp-controller="Games" enctype="multipart/form-data">
+<form asp-controller="Game" enctype="multipart/form-data" method="post">
     <div class="row">
         <div class="col-md-6">
             <div class="form-group">
@@ -16,7 +17,7 @@
             <div class="form-group">
                 <label asp-for="CategoryId" class="form-label mt-4"></label>
                 <select class="form-select" asp-for="CategoryId" asp-items="Model.Categories">
-                    <option>Select a category</option>
+                    <option value="">Select a category</option>
                 </select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
@@ -34,19 +35,30 @@
             </div>
             <div class="form-group">
                 <label asp-for="Cover" class="form-label mt-4"></label>
-                <input type="file" class="form-control" asp-for="Cover">
+                <input  class="form-control" asp-for="Cover" name="Cover" id="cover"
+                       data-rule-extension="@FileSettings.AllowedExtensions.Replace(".",string.Empty)"
+                       data-msg-extension="only @FileSettings.AllowedExtensions are allowed">
                 <small class="form-text text-muted">Only .jpg, .jpeg, .png files are allowed with max size 1MB.</small>
                 <span asp-validation-for="Cover" class="text-danger d-block"></span>
             </div>
             <button type="submit" class="btn btn-light text-black mt-4">Save</button>
         </div>
-        <div class="col-md-6"></div>
+        <div class="col-md-6">
+            <img alt="cover" class="cover-show"/>
+        </div>
     </div>
 </form>
 
 
 @section Scripts
-    {
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+{
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function(){
+            $('#cover').on('change',function(){
+                $('.cover-show').attr('src',window.URL.createObjectURL(this) )
+            });
+        });
+
+    </script>
 }

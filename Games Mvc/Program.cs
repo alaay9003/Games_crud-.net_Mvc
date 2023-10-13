@@ -1,3 +1,4 @@
+using Games_Mvc.Services;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -5,6 +6,9 @@ var connection = builder.Configuration.GetConnectionString("Default") ?? throw n
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connection));
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<ICategortServies, CategortServies>();
+builder.Services.AddScoped<IDevicesServies, DevicesServies>();
+builder.Services.AddScoped<IGameServies, GameServies>();
 
 var app = builder.Build();
 

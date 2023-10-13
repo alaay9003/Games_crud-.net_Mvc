@@ -1,4 +1,5 @@
 ﻿using Games_Mvc.Models;
+using Games_Mvc.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,11 +7,10 @@ namespace Games_Mvc.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly IGameServies _GameServies;
+        public HomeController(IGameServies gameServies)
         {
-            _logger = logger;
+            _GameServies = gameServies;
         }
 
         public IActionResult Index()
